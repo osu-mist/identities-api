@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Express API Skeleton
-  description: Skeleton for Express APIs
+  title: Identity API
+  description: Get identity information about people at OSU
   version: v2
   license:
     name: GNU Affero General Public License Version 3
@@ -12,86 +12,86 @@ info:
     email: isdataarchitecture@oregonstate.edu
 externalDocs:
   description: GitHub Repository
-  url: https://github.com/osu-mist/express-api-skeleton
+  url: https://github.com/osu-mist/identity-api
 servers:
   - url: https://api.oregonstate.edu/v2
 security:
   - OAuth2:
       - full
 paths:
-  /pets:
+  /identities:
     get:
-      summary: List all pets
+      summary: Get identity information
       tags:
-        - pets
-      description: Get all pets
-      operationId: getPets
+        - identities
+      description: Get identity information. At least include one of the following query parameters.
+      operationId: getIdentities
       parameters:
-        - $ref: '#/components/parameters/pageNumber'
-        - $ref: '#/components/parameters/pageSize'
-        - in: query
-          name: species
-          description: Search by pet species
+        - name: filter[firstName]
+          in: query
+          description: First name of a person. Must be used with `filter[lastName]` together.
           required: false
           schema:
             type: string
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PetsResult'
-        '400':
-          $ref: '#/components/responses/400'
-        '500':
-          $ref: '#/components/responses/500'
-    post:
-      summary: Add a new pet
-      tags:
-        - pets
-      operationId: postPet
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PetPostBody'
-      responses:
-        '201':
-          description: Pet successfully created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PetResult'
-        '400':
-          $ref: '#/components/responses/400'
-        '409':
-          $ref: '#/components/responses/409'
-        '500':
-          $ref: '#/components/responses/500'
-  /pets/{id}:
-    get:
-      summary: Info for a specific pet
-      tags:
-        - pets
-      description: Get pet by unique ID
-      operationId: getPetById
-      parameters:
-        - name: id
-          in: path
-          description: Unique Pet ID
-          required: true
+          example: Harry
+        - name: filter[lastName]
+          in: query
+          description: Last name of a person. Must be used with `filter[firstName]` together.
+          required: false
           schema:
             type: string
-            pattern: '^[A-Za-z0-9-]+$'
+          example: Potter
+        - name: filter[username]
+          in: query
+          description: ONID user ID
+          required: false
+          schema:
+            type: string
+          example: potterharry2000
+        - name: filter[osuUid]
+          in: query
+          description: OSU UID of a person
+          required: false
+          schema:
+            type: string
+          example: '1234567890'
+        - name: filter[proxId]
+          in: query
+          description: >-
+            ID Center ID Card Prox ID. The first part before `-` is the facility code and the second
+            part after `-` is the card number
+          required: false
+          schema:
+            type: string
+            pattern: '^\d{3}-\d{5}$|^\d{4}-\d{7}$'
+          example: '1234-1234567'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PetResult'
+                $ref: '#/components/schemas/IdentitySetResult'
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+  /identities/{osuId}:
+    get:
+      summary: Get identity information by OSU ID
+      tags:
+        - identities
+      description: Get identity information by OSU ID
+      operationId: getIdentityById
+      parameters:
+        - $ref: '#/components/parameters/osuId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResult'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -106,165 +106,37 @@ components:
           scopes:
             full: Full access to the API
   parameters:
-    pageNumber:
-      name: page[number]
-      in: query
-      required: false
-      description: Page number of results
+    osuId:
+      name: osuId
+      in: path
+      description: 9-digit OSU ID
+      required: true
       schema:
-        type: integer
-        minimum: 1
-        default: 1
-    pageSize:
-      name: page[size]
-      in: query
-      required: false
-      description: Number of results to return
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 500
-        default: 25
+        type: string
+        pattern: '^\d{9}$'
   responses:
     '400':
       description: Bad request
-      content:
+      content: &errorContent
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResult'
     '404':
-      description: Not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResult'
-    '409':
-      description: Conflict
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResult'
+      description: Resource not found
+      content: *errorContent
     '500':
       description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResult'
+      content: *errorContent
   schemas:
-    Meta:
-      properties:
-        totalResults:
-          type: integer
-          description: Total number of results
-          example: 10
-        totalPages:
-          type: integer
-          description: Total number of pages
-          example: 10
-        currentPageNumber:
-          type: integer
-          description: Page number of the returned results
-          example: 1
-        currentPageSize:
-          type: integer
-          description: Number of results per page
-          example: 25
     SelfLink:
+      type: object
       properties:
         self:
           type: string
-          format: url
+          format: uri
           description: Self-link of current resource
-    PaginationLinks:
-      properties:
-        first:
-          type: string
-          format: url
-          description: The first page of data
-        last:
-          type: string
-          format: url
-          description: The last page of data
-        prev:
-          type: string
-          format: url
-          description: The previous page of data
-        next:
-          type: string
-          format: url
-          description: The next page of data
-    PetResource:
-      properties:
-        id:
-          type: string
-          description: A unique ID of pet
-        type:
-          type: string
-          enum:
-            - pet
-        links:
-          $ref: '#/components/schemas/SelfLink'
-        attributes:
-          properties:
-            name:
-              type: string
-              description: Name of pet
-              example: Hedwig
-            owner:
-              type: string
-              description: Name of owner
-              example: Harry Potter
-            species:
-              type: string
-              description: Species of pet
-              example: Owl
-    PetPostBody:
-      properties:
-        data:
-          type: object
-          properties:
-            type:
-              $ref: '#/components/schemas/PetResource/properties/type'
-            attributes:
-              type: object
-              properties:
-                name:
-                  $ref: '#/components/schemas/PetResource/properties/attributes/properties/name'
-                owner:
-                  $ref: '#/components/schemas/PetResource/properties/attributes/properties/owner'
-                species:
-                  $ref: '#/components/schemas/PetResource/properties/attributes/properties/species'
-              required:
-                - name
-                - owner
-                - species
-              additionalProperties: false
-          required:
-            - type
-            - attributes
-          additionalProperties: false
-      required:
-       - data
-      additionalProperties: false
-    PetResult:
-      properties:
-        links:
-          $ref: '#/components/schemas/SelfLink'
-        data:
-          $ref: '#/components/schemas/PetResource'
-    PetsResult:
-      properties:
-        links:
-          allOf:
-            - $ref: '#/components/schemas/SelfLink'
-            - $ref: '#/components/schemas/PaginationLinks'
-        meta:
-          $ref: '#/components/schemas/Meta'
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/PetResource'
     ErrorObject:
+      type: object
       properties:
         status:
           type: string
@@ -280,18 +152,86 @@ components:
           example: '1234'
         detail:
           type: string
-          description: A long description of the error that may contain instance-specific
-            details
+          description: A long description of the error that may contain instance-specific details
         links:
+          type: object
           properties:
             about:
               type: string
-              format: url
+              format: uri
               description: A link to further information about the error
               example: https://developer.oregonstate.edu/documentation/error-reference#1234
     ErrorResult:
+      type: object
       properties:
         errors:
           type: array
           items:
             $ref: '#/components/schemas/ErrorObject'
+    IdentityId:
+      type: string
+      description: Unique ID of identity resource
+    IdentityType:
+      type: string
+      enum:
+        - identity
+    IdentityAttributes:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First name of a person
+          nullable: false
+        middleName:
+          type: string
+          description: Middle name of a person
+          nullable: true
+        lastName:
+          type: string
+          description: Last name of a person
+          nullable: false
+        osuId:
+          type: string
+          description: 9-digit OSU ID
+          nullable: false
+        username:
+          type: string
+          description: ONID user ID
+          nullable: true
+        osuUid:
+          type: string
+          description: OSU UID of a person. Public identifier given in Directory API
+          nullable: true
+        proxId:
+          type: string
+          description: ID Center ID Card Prox ID
+          nullable: true
+      additionalProperties: false
+    IdentityGetResource:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/IdentityType'
+        id:
+          $ref: '#/components/schemas/IdentityId'
+        attributes:
+          $ref: '#/components/schemas/IdentityAttributes'
+        links:
+          $ref: '#/components/schemas/SelfLink'
+      additionalProperties: false
+    IdentityResult:
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/SelfLink'
+        data:
+          $ref: '#/components/schemas/IdentityGetResource'
+    IdentitySetResult:
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/SelfLink'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityGetResource'

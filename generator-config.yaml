@@ -1,0 +1,62 @@
+# This file is used for generating the first draft of openapi. Storing in repo for record.
+
+title: Identity API
+description: Get identity information about people at OSU
+version: v2
+githubUrl: https://github.com/osu-mist/identity-api
+resources:
+  identity:
+    # The plural name of the resource. Default: '{resource}s'
+    plural: identities
+    # Whether the resources should have self links or not. Default: true
+    selfLinks: true
+    # Whether to paginate the get endpoint or not. If resource doesn't have get endpoint, we should
+    # either ignore this value or print a warning/error. Default: false
+    paginate: false
+    # Whether to add an 'include' parameter. Default: false
+    compoundDocuments: false
+    # Whether to add 'fields[resource]' parameter(s) or not. Default: false
+    sparseFieldsets: false
+    # Array of operations for this resource. Should only include 'get', 'getById', 'post',
+    # 'patchById', and 'deleteById'. Default: []
+    operations:
+      - get
+      - getById
+    # Specify the attributes that appear in the get/getById responses and the attributes allowed in
+    # the post/patch bodies. Should either be 'all' or an array. Default: 'all'.
+    # TODO: If we have attributes that are objects and we only want to allow some properties of
+    # those objects, maybe we could specify 'attributeName.propName'
+    getAttributes: all
+    postAttributes: []
+    patchAttributes: []
+    # Should either be 'all' or an array. If it's an array, we should verify that all items exist in
+    # attributes. Either ignore/warn/error if resource doesn't have a post endpoint. Default: 'all'
+    requiredPostAttributes: all
+    # attributes of the resource. This object should be inserted directly as the resource object's
+    # attributes. Default: {}
+    attributes:
+      firstName:
+        type: string
+        description: First name of a person
+      middleName:
+        type: string
+        description: Middle name of a person
+      lastName:
+        type: string
+        description: Last name of a person
+      osuId:
+        type: string
+        description: 9 digit OSU ID
+      username:
+        type: string
+        description: ONID user ID
+      osuUid:
+        type: string
+        description: OSU UID of a person. Public identifier given in Directory API
+      proxId:
+        type: string
+        description: ID Center ID Card Prox ID
+    # Relationships for a resource. Default: {}
+    relationships: {}
+    # sub-resources. Example: '/pets/{id}/previousOwners' and '/pets/{id}/firstOwner'. Default: {}
+    subResources: {}
