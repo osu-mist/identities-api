@@ -43,7 +43,7 @@ paths:
             type: string
             nullable: false
           example: Potter
-        - name: filter[username]
+        - name: filter[onid]
           in: query
           description: ONID user ID
           required: false
@@ -178,8 +178,7 @@ components:
       description: Unique ID of identity resource
     IdentityType:
       type: string
-      enum:
-        - identity
+      enum: [identity]
     IdentityAttributes:
       type: object
       properties:
@@ -187,30 +186,37 @@ components:
           type: string
           description: First name of a person
           nullable: false
+          example: Harry
         middleName:
           type: string
           description: Middle name of a person
           nullable: true
+          example: James
         lastName:
           type: string
           description: Last name of a person
           nullable: false
+          example: Potter
         osuId:
           type: string
           description: 9-digit OSU ID
           nullable: false
-        username:
+          example: '123456789'
+        onid:
           type: string
           description: ONID user ID
           nullable: true
+          example: potterharry2000
         osuUid:
           type: string
           description: OSU UID of a person. Public identifier given in Directory API
           nullable: true
+          example: '1234567890'
         proxId:
           type: string
           description: ID Center ID Card Prox ID
           nullable: true
+          example: '1234-1234567'
       additionalProperties: false
     IdentityGetResource:
       type: object
