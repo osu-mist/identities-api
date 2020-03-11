@@ -33,6 +33,7 @@ paths:
           required: false
           schema:
             type: string
+            nullable: false
           example: Harry
         - name: filter[lastName]
           in: query
@@ -40,6 +41,7 @@ paths:
           required: false
           schema:
             type: string
+            nullable: false
           example: Potter
         - name: filter[username]
           in: query
@@ -47,6 +49,7 @@ paths:
           required: false
           schema:
             type: string
+            nullable: false
           example: potterharry2000
         - name: filter[osuUid]
           in: query
@@ -54,6 +57,7 @@ paths:
           required: false
           schema:
             type: string
+            nullable: false
           example: '1234567890'
         - name: filter[proxId]
           in: query
@@ -64,6 +68,7 @@ paths:
           schema:
             type: string
             pattern: '^\d{3}-\d{5}$|^\d{4}-\d{7}$'
+            nullable: false
           example: '1234-1234567'
       responses:
         '200':
