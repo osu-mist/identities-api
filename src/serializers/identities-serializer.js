@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import { serializerOptions } from 'utils/jsonapi';
 import { openapi } from 'utils/load-openapi';
-import { paginate } from 'utils/paginator';
 import { apiBaseUrl, resourcePathLink, paramsLink } from 'utils/uri-builder';
 
 const identityGetResourceProp = openapi.components.schemas.IdentityGetResource.properties;
@@ -16,28 +15,14 @@ const identityGetResourceUrl = resourcePathLink(apiBaseUrl, identityGetResourceP
  * Serialize identityResources to JSON API
  *
  * @param {object[]} rawIdentities Raw data rows from data source
- * @param {object} req Express request object
+ * @param {object} query query parameters
  * @returns {object} Serialized identityResources object
  */
-const serializeIdentities = (rawIdentities, req) => {
-  const { query } = req;
-
-  // Add pagination links and meta information to options if pagination is enabled
-  const pageQuery = {
-    size: query['page[size]'],
-    number: query['page[number]'],
-  };
-
-  const pagination = paginate(rawIdentities, pageQuery);
-  pagination.totalResults = rawIdentities.length;
-  rawIdentities = pagination.paginatedRows;
-
-  // TODO use req.path
+const serializeIdentities = (rawIdentities, query) => {
   const topLevelSelfLink = paramsLink(identityGetResourceUrl, query);
   const serializerArgs = {
     identifierField: 'osuId',
     resourceKeys: identityGetResourceKeys,
-    pagination,
     resourcePath: identityGetResourcePath,
     topLevelSelfLink,
     query,
