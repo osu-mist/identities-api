@@ -15,8 +15,8 @@ const { endpointUri } = config.get('server');
 const getIdentities = async () => {
   const connection = await getConnection();
   try {
-    const { rawIdentities } = await connection.execute(contrib.getIdentities());
-    const serializedIdentities = serializeIdentities(rawIdentities, endpointUri);
+    const { rows } = await connection.execute(contrib.getIdentities());
+    const serializedIdentities = serializeIdentities(rows, endpointUri);
     return serializedIdentities;
   } finally {
     connection.close();
@@ -32,15 +32,15 @@ const getIdentities = async () => {
 const getIdentityById = async (osuId) => {
   const connection = await getConnection();
   try {
-    const { rawIdentities } = await connection.execute(contrib.getIdentityById(osuId), osuId);
-
-    if (_.isEmpty(rawIdentities)) {
+    const { rows } = await connection.execute(contrib.getIdentityById(), [osuId]);
+    if (_.isEmpty(rows)) {
       return undefined;
     }
-    if (rawIdentities.length > 1) {
+    if (rows.length > 1) {
       throw new Error('Expect a single object but got multiple results.');
     } else {
-      const [rawIdentity] = rawIdentities;
+      const [rawIdentity] = rows;
+
       const serializedIdentity = serializeIdentity(rawIdentity);
       return serializedIdentity;
     }

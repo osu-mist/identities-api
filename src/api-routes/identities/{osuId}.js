@@ -1,6 +1,5 @@
 import { errorBuilder, errorHandler } from 'errors/errors';
 import { getIdentityById } from '../../db/oracledb/identities-dao';
-import { serializeIdentity } from '../../serializers/identities-serializer';
 
 /**
  * Get pet by unique ID
@@ -10,11 +9,10 @@ import { serializeIdentity } from '../../serializers/identities-serializer';
 const get = async (req, res) => {
   try {
     const { osuId } = req.params;
-    const rawIdentity = await getIdentityById(osuId);
-    if (!rawIdentity) {
+    const result = await getIdentityById(osuId);
+    if (!result) {
       errorBuilder(res, 404, 'A person with the specified OSU ID was not found.');
     } else {
-      const result = serializeIdentity(rawIdentity, req);
       res.send(result);
     }
   } catch (err) {

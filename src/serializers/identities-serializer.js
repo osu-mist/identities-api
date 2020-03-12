@@ -35,7 +35,7 @@ const serializeIdentities = (rawIdentities, req) => {
   // TODO use req.path
   const topLevelSelfLink = paramsLink(identityGetResourceUrl, query);
   const serializerArgs = {
-    identifierField: 'id',
+    identifierField: 'osuId',
     resourceKeys: identityGetResourceKeys,
     pagination,
     resourcePath: identityGetResourcePath,
@@ -54,24 +54,16 @@ const serializeIdentities = (rawIdentities, req) => {
  * Serialize identityResource to JSON API
  *
  * @param {object} rawIdentity Raw data row from data source
- * @param {boolean} req Express request object
  * @returns {object} Serialized identityResource object
  */
-const serializeIdentity = (rawIdentity, req) => {
-  const { query } = req;
-
-  // TODO use req.path
-  const baseUrl = req.method === 'POST'
-    ? identityGetResourceUrl
-    : resourcePathLink(identityGetResourceUrl, rawIdentity.id);
-  const topLevelSelfLink = paramsLink(baseUrl, query);
+const serializeIdentity = (rawIdentity) => {
+  const topLevelSelfLink = resourcePathLink(identityGetResourceUrl, rawIdentity.osuId);
 
   const serializerArgs = {
-    identifierField: 'id',
+    identifierField: 'osuId',
     resourceKeys: identityGetResourceKeys,
     resourcePath: identityGetResourcePath,
     topLevelSelfLink,
-    query,
     enableDataLinks: true,
   };
 
