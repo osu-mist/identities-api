@@ -31,9 +31,7 @@ const getIdentities = async (query) => {
 
   const connection = await getConnection();
   try {
-    const { rows } = await connection.execute(contrib.getIdentities(parsedQuery), [
-      parsedQuery.lastName, parsedQuery.firstName,
-    ]);
+    const { rows } = await connection.execute(contrib.getIdentities(parsedQuery), parsedQuery);
 
     const serializedIdentities = serializeIdentities(rows, query);
     return serializedIdentities;
@@ -51,7 +49,7 @@ const getIdentities = async (query) => {
 const getIdentityById = async (osuId) => {
   const connection = await getConnection();
   try {
-    const { rows } = await connection.execute(contrib.getIdentityById(), [osuId]);
+    const { rows } = await connection.execute(contrib.getIdentityById(), { osuId });
     if (_.isEmpty(rows)) {
       return undefined;
     }
