@@ -4,7 +4,7 @@ import { errorBuilder, errorHandler } from 'errors/errors';
 import { getIdentities } from '../db/oracledb/identities-dao';
 
 /**
- * Get pets
+ * Get Identities
  *
  * @type {RequestHandler}
  */

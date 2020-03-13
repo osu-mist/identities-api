@@ -2,7 +2,7 @@ import { errorBuilder, errorHandler } from 'errors/errors';
 import { getIdentityById } from '../../db/oracledb/identities-dao';
 
 /**
- * Get pet by unique ID
+ * Get identity by OSU ID
  *
  * @type {RequestHandler}
  */
