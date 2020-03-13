@@ -49,7 +49,8 @@ const getIdentities = async (query) => {
 const getIdentityById = async (osuId) => {
   const connection = await getConnection();
   try {
-    const { rows } = await connection.execute(contrib.getIdentityById(), { osuId });
+    const query = { osuId };
+    const { rows } = await connection.execute(contrib.getIdentities(query), query);
     if (_.isEmpty(rows)) {
       return undefined;
     }
