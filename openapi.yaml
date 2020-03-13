@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Identity API
-  description: Get identity information about people at OSU
+  title: Identities API
+  description: Get identities information about people at OSU
   version: v2
   license:
     name: GNU Affero General Public License Version 3
