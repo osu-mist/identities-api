@@ -1,7 +1,7 @@
 {
-  "name": "express-api-skeleton",
-  "version": "1.0.0",
-  "description": "Skeleton for Express APIs.",
+  "name": "identities-api",
+  "version": "2.0.0",
+  "description": "OSU Identities API",
   "homepage": "https://github.com/osu-mist/express-api-skeleton#readme",
   "bugs": {
     "url": "https://github.com/osu-mist/express-api-skeleton/issues"
