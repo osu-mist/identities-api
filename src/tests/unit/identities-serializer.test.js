@@ -61,21 +61,24 @@ describe('Test identities-serializer', () => {
   it('test serializeIdentities', () => {
     const { fakeIdentitiesTestCases } = testData;
 
-    _.forEach(fakeIdentitiesTestCases, (fakeIdentityTestCase) => {
-      const serializedIdentities = identitiesSerializer.serializeIdentities(fakeIdentityTestCase);
+    _.forEach(fakeIdentitiesTestCases, (fakeIdentitiesTestCase) => {
+      const serializedIdentities = identitiesSerializer.serializeIdentities(fakeIdentitiesTestCase);
+
       expect(serializedIdentities).to.have.keys(getComponentSchemaProps('IdentitySetResult'));
 
       const { links, data } = serializedIdentities;
       expect(links).to.contain.keys(_.keys(getComponentSchemaProps('SelfLink')));
-      expect(data).to.be.an('object');
+      expect(data).to.be.an('array');
 
-      checkIdentitySchema(data);
+      _.forEach(data, (identity) => {
+        checkIdentitySchema(identity);
+      });
     });
   });
   it('test serializeIdentity', () => {
-    const { fakeIdentitiesTestCases } = testData;
+    const { fakeIdentityTestCases } = testData;
 
-    _.forEach(fakeIdentitiesTestCases, (fakeIdentityTestCase) => {
+    _.forEach(fakeIdentityTestCases, (fakeIdentityTestCase) => {
       const serializedIdentity = identitiesSerializer.serializeIdentity(fakeIdentityTestCase);
       expect(serializedIdentity).to.have.keys(getComponentSchemaProps('IdentityResult'));
 
