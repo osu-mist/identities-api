@@ -197,6 +197,21 @@ components:
           description: Last name of a person
           nullable: false
           example: Potter
+        displayFirstName:
+          type: string
+          nullable: true
+          description: Preferred first name
+          example: John
+        displayMiddleName:
+          type: string
+          nullable: true
+          description: Preferred middle name
+          example: Adam
+        displayLastName:
+          type: string
+          nullable: true
+          description: Preferred last name
+          example: Smith
         osuId:
           type: string
           description: 9-digit OSU ID
